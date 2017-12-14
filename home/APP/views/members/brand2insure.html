@@ -1,0 +1,105 @@
+<div id="tb<{$uniqid}>" style="padding:5px">
+		<table cellspacing="0" cellpadding="0"><tbody><tr>				
+		<td><a href="javascript:;" onclick="brand2insureadd();"  class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">添加</span><span class="l-btn-icon icon-add">&nbsp;</span></span></a></td><td><div class="datagrid-btn-separator"></div></td>		
+		<td><a href="javascript:;" onclick="brand2insuredelete();"  class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">删除</span><span class="l-btn-icon icon-cancel">&nbsp;</span></span></a></td><td><div class="datagrid-btn-separator"></div></td>
+		<td><a href="javascript:;" onclick="brand2insurereload();"  class="l-btn l-btn-small l-btn-plain" group="" id=""><span class="l-btn-left l-btn-icon-left"><span class="l-btn-text">重载</span><span class="l-btn-icon icon-reload">&nbsp;</span></span></a></td>
+		<td>&nbsp;&nbsp;<input  id="brand2insurekeywords"  style="width:100px" type="text" class= "easyui-input textbox" > </input></td>
+		<td><span><a href="javascript:void(0)" class="easyui-linkbutton" plain="true" iconCls="icon-search" onclick="brand2insuresearch()">查询</a></span>	</td>
+		</tr></tbody></table>
+</div>
+
+<div onselectstart="return false;" style="-moz-user-select:none;">
+    <table id="brand2insure"></table>
+</div>
+
+<div id="brand2insuredlg" class="easyui-dialog" style="width:500px; height:200px;" title="信息框" closed="true"></div>
+
+<script>
+var brand2insureadd=function(){				
+				$("#brand2insuredlg").dialog({    
+					title: '添加信息',      
+					closed: false,
+					width: 500,
+					height:200,    
+					cache: false,    
+					href: '/members/brand2insureadd?id=<{$id}>',
+					modal: true,
+					buttons:[{
+						text:'保存',
+						id:'brand2insureincreasesubmit',
+						iconCls:'icon-ok',
+					},{
+						text:'关闭',
+						iconCls:'icon-no',
+						handler:function(){$("#brand2insuredlg").dialog('close');}
+					}]  
+				});								
+}
+var brand2insuredelete=function(){
+				var row = $('#brand2insure').datagrid('getSelected');
+				if (row){
+                    $.messager.confirm('提示','确定删除吗？',function(r){
+                        if(r==true){
+                            $.messager.progress();
+                            $.post('/members/brand2insuredelete', {id:row.id}, function(data){
+                                $.messager.progress('close');
+								if(data.code=='200'){
+										$.messager.show({
+												title:'提示',
+												msg:data.msg,
+												timeout:3000,
+												showType:'slide'
+										});
+										brand2insurereload();
+								}else{
+										$.messager.alert('提示',data.msg,'warning');
+								}								
+                            },'json');
+                        }
+                    });
+                }else{
+						$.messager.alert('提示','请先选择要删除的行！','warning');
+				}
+}
+var brand2insurereload=function(){
+                $("#brand2insure").datagrid('reload');
+}
+var brand2insuresearch=function(){
+        $("#brand2insure").datagrid({
+            title:'<{$company}>',
+			width:680,
+            height:450,//高度
+            singleSelect:true,//如果为true，则只允许选择一行
+            striped:true,//是否显示斑马线效果。
+            rownumbers:true,//如果为true，则显示一个行号列。
+            pagination:true,//是否显示分页
+            pageSize:10,
+            pageList:[10,15,20,25],
+            method:'post',
+            sortName:'id',
+            sortOrder:'desc',
+            url:'<{url c=members a=brand2insureGet}>',
+			queryParams : {id:<{$id}>},
+            fitColumns:true,//真正的自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动。
+            nowrap:true,//如果为true，则在同一行中显示数据。设置为true可以提高加载性能。 是否换行
+            selectOnCheck:false,
+            checkOnSelect:true,
+			toolbar: '#tb<{$uniqid}>',
+			rowStyler: function(index,row){
+					if (row.authstatus=='待认证'){
+						return 'color:#F00;font-style:italic;';
+					}
+			},
+            columns:[[
+				{field:'factory',title:'品牌厂家',width:'20%'},
+				{field:'company',title:'保险公司',width:'30%'},
+				{field:'created_at',title:'创建时间',width:'20%',sortable:true},
+				{field:'updated_at',title:'更新时间',width:'20%',sortable:true},
+            ]],
+			onDblClickRow : function(index,field){					
+				brand2insureedit('编辑');
+			} 
+    	});
+}
+brand2insuresearch();
+</script>

@@ -1,0 +1,77 @@
+<form id="brand2insureaddfm" method="post">
+<input type="hidden" name="provider_id" value="<{$id}>" />
+<table border="0" width="100%" cellspacing="1" cellpadding="5" bgcolor="#c4d3e1" style="text-align:left; line-height:18px;">
+		<tr bgcolor="#FFFFFF"> 
+			<td style="line-height:30px;"  width="20%">汽车品牌：</td>
+			<td width="80%">
+			<SELECT style="width:153px; height:25px;" size='1'  onchange="getFactory(this.value);">>
+				<OPTION value="0">请选择 </OPTION>
+				<OPTION value="0" disabled="disabled"> ----------------- </OPTION>
+				<{section name=sec1 loop=$carbrand}>
+				<OPTION value="<{$carbrand[sec1].id}>"><{$carbrand[sec1].letter}> <{$carbrand[sec1].brand}></OPTION>
+				<{/section}>
+			</SELECT>
+			</td>
+		</tr>
+		<tr bgcolor="#FFFFFF"> 
+			<td style="line-height:30px;"  width="20%">汽车厂家：</td>
+			<td width="80%">
+			<SELECT name="carfactory_id" id='factory_id' style="width:153px; height:25px;" size='1'>
+				<OPTION value="0">请选择 </OPTION>
+				<OPTION value="0" disabled="disabled"> ----------------- </OPTION>				
+			</SELECT>
+			</td>
+		</tr>
+		
+		<tr bgcolor="#FFFFFF"> 
+			<td style="line-height:30px;"  width="20%">保险公司：</td>
+			<td width="80%">
+			<SELECT name='insure_id' style="width:153px; height:25px;" size='1'>
+				<OPTION value="0">请选择 </OPTION>
+				<OPTION value="0" disabled="disabled"> ----------------- </OPTION>
+				<{section name=sec1 loop=$insure}>
+				<OPTION value="<{$insure[sec1].id}>"><{$insure[sec1].company}></OPTION>
+				<{/section}>
+			</SELECT>
+			</td>
+		</tr>
+						
+</table>
+</form>
+
+<script>
+var getFactory=function(brand_id){
+	$.get('/index/carfactory?brand_id='+brand_id, function(data){
+		var factory='';
+		$.each(data.data, function(key, value){
+			factory+="<option value='"+value.id+"'>"+value.factory+"</option>";
+		})
+		$('#factory_id').empty();
+		$('#factory_id').append(factory);
+	},'json');
+}
+$(function(){
+		$('#brand2insureincreasesubmit').click(function(data){			
+				$('#brand2insureaddfm').form('submit', {    
+					url:'/members/brand2insureincrease',    
+					success: function(data){    
+						var data = eval('(' + data + ')');
+						
+						if(data.code=='200'){
+								$.messager.show({
+										title:'提示',
+										msg:data.msg,
+										timeout:3000,
+										showType:'slide'
+								});				
+								$('#brand2insureaddfm').form('clear');
+								$("#brand2insuredlg").dialog('close');
+								$("#brand2insure").datagrid('reload');
+						}else{
+								$.messager.alert('提示',data.msg,'warning');
+						}
+					}    
+				});
+		})	
+});
+</script>

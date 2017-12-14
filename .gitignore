@@ -1,0 +1,12 @@
+/user/.idea/
+/user/.git
+/user/Homestead.json
+/user/Homestead.yaml
+/user/.env
+/user/vendor
+/user/.idea/
+/user/public/orm/
+/.idea/
+/home/conf/app.ini
+/home/vendor/
+/home/log/
