@@ -1,4 +1,5 @@
 # lumen框架部分接口配置
+```
 server {
         listen       80;
         server_name  api01.com;
@@ -13,8 +14,10 @@ server {
 
         access_log /home/logs/home_api01.log access;
 }
+```
 
 # yaf框架部分接口配置
+```
 server {
         listen       80;
         server_name  api02.com;
@@ -33,8 +36,10 @@ server {
 
         access_log /home/logs/home_api02.log access;
 }
+```
 
 # 整体配置,设置反向代理配置两个不同的框架协同工作
+```
 limit_req_zone $binary_remote_addr zone=qps1:1m  rate=3056r/s;
 limit_req_zone $binary_remote_addr zone=qps2:1m  rate=4565r/s;
 limit_req_zone $binary_remote_addr zone=qps3:1m  rate=5812r/s;
@@ -81,3 +86,4 @@ server {
 	limit_req  zone=qps1 burst=5000;
 	access_log  /home/logs/host.log  access;
 }
+```
