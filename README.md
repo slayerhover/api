@@ -1,6 +1,3 @@
-# api
-
-nginx配置
 # lumen框架部分接口配置
 server {
         listen       80;
@@ -37,15 +34,10 @@ server {
         access_log /home/logs/home_api02.log access;
 }
 
-#总配置,设置反向代理配置两个不同的框架协同工作
+# 整体配置,设置反向代理配置两个不同的框架协同工作
 limit_req_zone $binary_remote_addr zone=qps1:1m  rate=3056r/s;
 limit_req_zone $binary_remote_addr zone=qps2:1m  rate=4565r/s;
 limit_req_zone $binary_remote_addr zone=qps3:1m  rate=5812r/s;
-
-#upstream backend {
-#    drizzle_server 127.0.0.1:3306 dbname=scsj user=root password=asdfasdf protocol=mysql;
-#    drizzle_keepalive max=1000 overflow=ignore mode=single;
-#}
 
 server {
 	listen       80;
