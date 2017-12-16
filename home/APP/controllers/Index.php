@@ -49,7 +49,7 @@ class IndexController extends CoreController {
 	}
 	
 	#短信校验
-	private function checksmscode($smscode){
+	private function checksmscode($phone, $smscode){
 		if($this->config->application->debug==TRUE&&$smscode=='888888')	return TRUE;			
 		if(DB::table('scsj_smslog')->where('phone','=',$phone)->orderby('created','DESC')->first()['sn']==$smscode)	return TRUE;	
 			
@@ -95,7 +95,7 @@ class IndexController extends CoreController {
 			}			
 			/***参数验证EOF***/
 			/***验证smscodeBOF***/
-			if($this->checksmscode($smscode)==FALSE){
+			if($this->checksmscode($phone, $smscode)==FALSE){
 					$result	= array(
 								'ret'	=>	'1',
 								'msg'	=>	'短信验证码不正确.',
@@ -397,7 +397,7 @@ class IndexController extends CoreController {
 			}			
 			/***检测用户状态EOF***/
 			/***检测短信验证码BOF***/
-			if($this->checksmscode($smscode)==FALSE){	
+			if($this->checksmscode($phone, $smscode)==FALSE){	
 				$failedTimes = Cache::getInstance()->incr('loginFailTimes_'.$phone);
 				if($failedTimes>=5){
 					DB::table('t_user')->where('phone','=',$phone)->update(['lockuntil'=>time()+20*60]);
@@ -510,7 +510,7 @@ class IndexController extends CoreController {
 			}
 			/***参数验证EOF***/
 			/***验证smscodeBOF***/
-			if($this->checksmscode($smscode)==FALSE){	
+			if($this->checksmscode($phone, $smscode)==FALSE){	
 					$result	= array(
 								'ret'	=>	'1',
 								'msg'	=>	'短信验证码不正确.',
